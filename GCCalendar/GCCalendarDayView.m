@@ -36,7 +36,7 @@ static NSArray *timeStrings;
 - (id)initWithEvents:(NSArray *)a {
 	if (self = [super init]) {
 		NSPredicate *pred = [NSPredicate predicateWithFormat:@"allDayEvent == YES"];
-		events = [[a filteredArrayUsingPredicate:pred] retain];
+		events = [a filteredArrayUsingPredicate:pred];
 		
 		NSInteger eventCount = 0;
 		for (GCCalendarEvent *e in events) {
@@ -44,7 +44,6 @@ static NSArray *timeStrings;
 				GCCalendarTile *tile = [[GCCalendarTile alloc] init];
 				tile.event = e;
 				[self addSubview:tile];
-				[tile release];
 				
 				eventCount++;
 			}
@@ -54,10 +53,8 @@ static NSArray *timeStrings;
 	return self;
 }
 - (void)dealloc {
-	[events release];
 	events = nil;
 	
-	[super dealloc];
 }
 - (BOOL)hasEvents {
 	return ([events count] != 0);
@@ -126,13 +123,12 @@ static NSArray *timeStrings;
 - (id)initWithEvents:(NSArray *)a {
 	if (self = [super init]) {
 		NSPredicate *pred = [NSPredicate predicateWithFormat:@"allDayEvent == NO"];
-		events = [[a filteredArrayUsingPredicate:pred] retain];
+		events = [a filteredArrayUsingPredicate:pred];
 		
 		for (GCCalendarEvent *e in events) {
 			GCCalendarTile *tile = [[GCCalendarTile alloc] init];
 			tile.event = e;
 			[self addSubview:tile];
-			[tile release];
 		}
 	}
 	
@@ -142,10 +138,8 @@ static NSArray *timeStrings;
 	return ([events count] != 0);
 }
 - (void)dealloc {
-	[events release];
 	events = nil;
 	
-	[super dealloc];
 }
 - (void)layoutSubviews {
 	for (UIView *view in self.subviews) {
@@ -287,11 +281,10 @@ static NSArray *timeStrings;
 #pragma mark create and destroy view
 + (void)initialize {
 	if(self == [GCCalendarDayView class]) {
-		timeStrings = [[NSArray arrayWithObjects:@"12",
+		timeStrings = [NSArray arrayWithObjects:@"12",
 						@"1", @"2", @"3", @"4", @"5", @"6", @"7", @"8", @"9", @"10", @"11",
 						[[NSBundle mainBundle] localizedStringForKey:@"NOON" value:@"" table:@"GCCalendar"],
-						@"1", @"2", @"3", @"4", @"5", @"6", @"7", @"8", @"9", @"10", @"11", @"12", nil]
-					   retain];
+						@"1", @"2", @"3", @"4", @"5", @"6", @"7", @"8", @"9", @"10", @"11", @"12", nil];
 	}
 }
 - (id)initWithCalendarView:(GCCalendarView *)view {
@@ -301,20 +294,12 @@ static NSArray *timeStrings;
 	
 	return self;
 }
-- (void)dealloc {
-	self.date = nil;
-	
-    [super dealloc];
-}
 - (void)reloadData {
 	// get new events for date
 	events = [dataSource calendarEventsForDate:date];
 	
 	// drop all subviews
 	[self.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
-	[allDayView release];
-	[todayView release];
-	[scrollView release];
 	
 	// create all day view
 	allDayView = [[GCCalendarAllDayView alloc] initWithEvents:events];

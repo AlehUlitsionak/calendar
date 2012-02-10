@@ -30,6 +30,6 @@
 	BOOL today;
 }
 
-@property (nonatomic, retain) NSDate *date;
+@property (nonatomic, strong) NSDate *date;
 
 @end

@@ -33,7 +33,7 @@
 	id<GCCalendarDataSource> dataSource;
 }
 
-@property (nonatomic, retain) NSDate *date;
+@property (nonatomic, strong) NSDate *date;
 /*
  accessor methods for accessing the contentOffset of the scroll view.
  this is used to keep the scroll position the same from one day view

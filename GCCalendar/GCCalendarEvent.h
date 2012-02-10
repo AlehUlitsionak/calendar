@@ -47,7 +47,7 @@
 @property (nonatomic, copy) NSDate *startDate;
 @property (nonatomic, copy) NSDate *endDate;
 @property (nonatomic, copy) NSString *color;
-@property (nonatomic, retain) id userInfo;
+@property (nonatomic, strong) id userInfo;
 @property (nonatomic) BOOL allDayEvent;
 
 @end

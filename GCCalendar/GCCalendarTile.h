@@ -30,6 +30,6 @@
 	GCCalendarEvent *event;
 }
 
-@property (nonatomic, retain) GCCalendarEvent *event;
+@property (nonatomic, strong) GCCalendarEvent *event;
 
 @end

@@ -28,14 +28,5 @@
 	return self;
 }
 
-- (void)dealloc {
-	self.eventName = nil;
-	self.eventDescription = nil;
-	self.startDate = nil;
-	self.endDate = nil;
-	self.color = nil;
-	
-	[super dealloc];
-}
 
 @end

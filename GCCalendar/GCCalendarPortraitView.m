@@ -17,8 +17,8 @@
 #define kAnimationDuration 0.3f
 
 @interface GCCalendarPortraitView ()
-@property (nonatomic, retain) NSDate *date;
-@property (nonatomic, retain) GCCalendarDayView *dayView;
+@property (nonatomic, strong) NSDate *date;
+@property (nonatomic, strong) GCCalendarDayView *dayView;
 
 - (void)reloadDayAnimated:(BOOL)animated context:(void *)context;
 @end
@@ -51,12 +51,8 @@
 - (void)dealloc {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	
-	self.date = nil;
-	self.dayView = nil;
 	
-	[dayPicker release];
 	
-	[super dealloc];
 }
 
 #pragma mark calendar actions
@@ -78,7 +74,7 @@
 	
 	[[NSUserDefaults standardUserDefaults] setObject:date forKey:@"GCCalendarDate"];
 	
-	[self reloadDayAnimated:YES context:[NSNumber numberWithInt:interval]];
+	[self reloadDayAnimated:YES context:(__bridge void *)([NSNumber numberWithInt:interval])];
 }
 
 #pragma mark button actions
@@ -106,7 +102,6 @@
 																				target:self
 																				action:@selector(add)];
 		self.navigationItem.rightBarButtonItem = button;
-		[button release];
 	}
 	else {
 		self.navigationItem.rightBarButtonItem = nil;
@@ -145,7 +140,6 @@
 															  target:self 
 															  action:@selector(today)];
 	self.navigationItem.leftBarButtonItem = button;
-	[button release];
 }
 - (void)viewWillAppear:(BOOL)animated {
 	[super viewWillAppear:animated];
@@ -166,7 +160,7 @@
 #pragma mark view animation functions
 - (void)reloadDayAnimated:(BOOL)animated context:(void *)context {
 	if (animated) {
-		NSTimeInterval interval = [(NSNumber *)context doubleValue];
+		NSTimeInterval interval = [(__bridge NSNumber *)context doubleValue];
 		
 		// block user interaction
 		dayPicker.userInteractionEnabled = NO;
@@ -181,7 +175,6 @@
 			initialFrame.origin.x = 0 - initialFrame.size.width;
 		}
 		else {
-			[nextDayView release];
 			return;
 		}
 		nextDayView.frame = initialFrame;
@@ -191,7 +184,7 @@
 
 		[self.view addSubview:nextDayView];
 		
-		[UIView beginAnimations:nil context:nextDayView];
+		[UIView beginAnimations:nil context:(__bridge void*)nextDayView];
 		[UIView setAnimationDuration:kAnimationDuration];
 		[UIView setAnimationDelegate:self];
 		[UIView setAnimationDidStopSelector:@selector(animationDidStop:finished:context:)];
@@ -216,7 +209,7 @@
 				finished:(NSNumber *)finished 
 				 context:(void *)context {
 	
-	GCCalendarDayView *nextDayView = (GCCalendarDayView *)context;
+	GCCalendarDayView *nextDayView = (__bridge GCCalendarDayView *)context;
 	
 	// cut variables
 	[dayView removeFromSuperview];
@@ -225,7 +218,6 @@
 	self.dayView = nextDayView;
 	
 	// release pointers
-	[nextDayView release];
 	
 	// reset pickers
 	dayPicker.userInteractionEnabled = YES;

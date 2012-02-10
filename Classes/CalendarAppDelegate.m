@@ -12,13 +12,13 @@
 
 - (void)applicationDidFinishLaunching:(UIApplication *)application {
 	// create calendar view
-	GCCalendarPortraitView *calendar = [[[GCCalendarPortraitView alloc] init] autorelease];
+	GCCalendarPortraitView *calendar = [[GCCalendarPortraitView alloc] init];
 	calendar.dataSource = self;
 	calendar.delegate = self;
 	calendar.hasAddButton = YES;
 	
 	// create navigation view
-	UINavigationController *nav = [[[UINavigationController alloc] initWithRootViewController:calendar] autorelease];
+	UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:calendar];
 	
 	// create tab controller
 	tabController = [[UITabBarController alloc] init];
@@ -32,13 +32,10 @@
 
 
 - (void)dealloc {
-    [window release];
 	window = nil;
 	
-	[tabController release];
 	tabController = nil;
 	
-    [super dealloc];
 }
 
 #pragma mark GCCalendarDataSource
@@ -68,7 +65,6 @@
 		event.endDate = [[NSCalendar currentCalendar] dateFromComponents:components];
 		
 		[events addObject:event];
-		[event release];
 	}
 
 
@@ -83,14 +79,12 @@
 	[components setHour:20];
 	evt.endDate = [[NSCalendar currentCalendar] dateFromComponents:components];
 	[events addObject:evt];
-	[evt release];
 	
 	// create an all day event
 	GCCalendarEvent *event = [[GCCalendarEvent alloc] init];
 	event.allDayEvent = YES;
 	event.eventName = @"All Day Event";
 	[events addObject:event];
-	[event release];
 	
 	return events;
 }

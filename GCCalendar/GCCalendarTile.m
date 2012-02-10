@@ -49,12 +49,9 @@
 - (void)dealloc {
 	self.event = nil;
 	
-	[super dealloc];
 }
 - (void)setEvent:(GCCalendarEvent *)e {
-	[event release];
 	event = e;
-	[event retain];
 	
 	// set bg image
 	NSString *colorString = [event.color capitalizedString];

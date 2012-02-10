@@ -57,18 +57,13 @@
 	return self;
 }
 - (void)dealloc {
-	[backButton release];
 	backButton = nil;
 	
-	[forwardButton release];
 	forwardButton = nil;
 	
-	[titleLabel release];
 	titleLabel = nil;
 	
-	self.date = nil;
 	
-	[super dealloc];
 }
 
 #pragma mark view notifications
@@ -93,9 +88,7 @@
 
 #pragma mark setters
 - (void)setDate:(NSDate *)newDate {
-	[date release];
 	date = newDate;
-	[date retain];
 	
 	self.today = [GCCalendar dateIsToday:date];
 		
@@ -145,11 +138,9 @@
 	if(sender == backButton) {
 		NSDate *newDate = [[NSDate alloc] initWithTimeInterval:-kSecondsInDay sinceDate:date];
 		self.date = newDate;
-		[newDate release];
 	} else if(sender == forwardButton) {
 		NSDate *newDate = [[NSDate alloc] initWithTimeInterval:kSecondsInDay sinceDate:date];
 		self.date = newDate;
-		[newDate release];
 	}
 	
 	[self sendActionsForControlEvents:UIControlEventValueChanged];

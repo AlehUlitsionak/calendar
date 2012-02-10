@@ -12,13 +12,13 @@
 
 @interface GCCalendarView : UIViewController {
 	// data source
-	id<GCCalendarDataSource> dataSource;
+	id<GCCalendarDataSource> __unsafe_unretained dataSource;
 	
 	// delegate
-	id<GCCalendarDelegate> delegate;
+	id<GCCalendarDelegate> __unsafe_unretained delegate;
 }
 
-@property (nonatomic, assign) id<GCCalendarDataSource> dataSource;
-@property (nonatomic, assign) id<GCCalendarDelegate> delegate;
+@property (nonatomic, unsafe_unretained) id<GCCalendarDataSource> dataSource;
+@property (nonatomic, unsafe_unretained) id<GCCalendarDelegate> delegate;
 
 @end
