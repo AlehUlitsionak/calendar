@@ -56,15 +56,6 @@
 	
 	return self;
 }
-- (void)dealloc {
-	backButton = nil;
-	
-	forwardButton = nil;
-	
-	titleLabel = nil;
-	
-	
-}
 
 #pragma mark view notifications
 - (CGSize)sizeThatFits:(CGSize)size {

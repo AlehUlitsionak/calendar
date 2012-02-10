@@ -30,14 +30,6 @@
     [window makeKeyAndVisible];
 }
 
-
-- (void)dealloc {
-	window = nil;
-	
-	tabController = nil;
-	
-}
-
 #pragma mark GCCalendarDataSource
 - (NSArray *)calendarEventsForDate:(NSDate *)date {
 	NSMutableArray *events = [NSMutableArray array];

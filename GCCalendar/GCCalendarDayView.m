@@ -52,10 +52,6 @@ static NSArray *timeStrings;
 	
 	return self;
 }
-- (void)dealloc {
-	events = nil;
-	
-}
 - (BOOL)hasEvents {
 	return ([events count] != 0);
 }
@@ -136,10 +132,6 @@ static NSArray *timeStrings;
 }
 - (BOOL)hasEvents {
 	return ([events count] != 0);
-}
-- (void)dealloc {
-	events = nil;
-	
 }
 - (void)layoutSubviews {
 	for (UIView *view in self.subviews) {

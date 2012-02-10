@@ -46,10 +46,6 @@
 	
 	return self;
 }
-- (void)dealloc {
-	self.event = nil;
-	
-}
 - (void)setEvent:(GCCalendarEvent *)e {
 	event = e;
 	
