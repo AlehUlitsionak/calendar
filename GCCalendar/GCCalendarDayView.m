@@ -13,6 +13,7 @@
 #import "GCCalendarView.h"
 #import "GCCalendarEvent.h"
 #import "GCCalendar.h"
+#import "DateRange.h"
 
 #define kTileLeftSide 52.0f
 #define kTileRightSide 10.0f
@@ -109,13 +110,21 @@ static NSArray *timeStrings;
 	NSArray *events;
 }
 
+@property (nonatomic, strong) DateRange* prevRange;
+
 - (id)initWithEvents:(NSArray *)a;
 - (BOOL)hasEvents;
 + (CGFloat)yValueForTime:(CGFloat)time;
 
 @end
 
-@implementation GCCalendarTodayView
+@implementation GCCalendarTodayView {
+@private
+    DateRange* _prevRange;
+}
+
+@synthesize prevRange = _prevRange;
+
 - (id)initWithEvents:(NSArray *)a {
 	if (self = [super init]) {
 		NSPredicate *pred = [NSPredicate predicateWithFormat:@"allDayEvent == NO"];
@@ -133,38 +142,94 @@ static NSArray *timeStrings;
 - (BOOL)hasEvents {
 	return ([events count] != 0);
 }
+
+NSComparisonResult dateSortForTiles(UIView* view1, UIView*  view2, void *context) {
+
+    GCCalendarTile *tile1 = (GCCalendarTile *)view1;
+    GCCalendarTile *tile2 = (GCCalendarTile *)view2;
+
+    NSDate *d1 = tile1.event.startDate;
+    NSDate *d2 = tile2.event.startDate;
+    return [d1 compare:d2];
+}
+
+- (NSArray* ) groupedEvents{
+
+    CGFloat width = self.bounds.size.width - kTileLeftSide - kTileRightSide;
+
+    int groupKey = 0;
+    NSMutableDictionary* dicGroups = [NSMutableDictionary dictionary];
+    NSMutableArray* currentGroupEvents = [NSMutableArray array];
+
+    NSMutableArray *sortedSubviews = [[NSMutableArray alloc] initWithArray:[self.subviews sortedArrayUsingFunction:dateSortForTiles context:nil]];
+
+    for (UIView *view in sortedSubviews) {
+        GCCalendarTile *tile = (GCCalendarTile *)view;
+        DateRange* currentRange = [[DateRange alloc] init];
+        currentRange.fromDate = tile.event.startDate;
+        currentRange.toDate = tile.event.endDate;
+
+        if ([self.prevRange intersectsRange:currentRange]) {
+            [currentGroupEvents addObject:tile];
+        }
+        else {
+            if (self.prevRange != nil) {
+                [dicGroups setObject:currentGroupEvents forKey:[NSNumber numberWithInt:groupKey]];
+                currentGroupEvents = [NSMutableArray array];
+                [currentGroupEvents addObject:tile];
+                groupKey++;
+            }
+            else {
+                [currentGroupEvents addObject:tile];
+            }
+        }
+
+        self.prevRange = currentRange;
+
+        if ([view isEqual:[sortedSubviews lastObject]]){
+            [dicGroups setObject:currentGroupEvents forKey:[NSNumber numberWithInt:groupKey]];
+        }
+    }
+
+    NSMutableArray* result = [NSMutableArray array];
+    for (int i = 0; i < [dicGroups count]; i++) {
+        NSMutableArray* currGroupEvents = [dicGroups objectForKey:[NSNumber numberWithInt:i]];
+        for (int j = 0; j < [currGroupEvents count]; j++) {
+            GCCalendarTile* currTile = [currGroupEvents objectAtIndex:j];
+            currTile.event.width = width/[currGroupEvents count];
+            currTile.event.startOffset = currTile.event.width*j;
+            [result addObject:currTile];
+        }
+    }
+    return result;
+};
+
+
 - (void)layoutSubviews {
-	for (UIView *view in self.subviews) {
-		// get calendar tile and associated event
-		GCCalendarTile *tile = (GCCalendarTile *)view;
-		
+
+    for (GCCalendarTile* tile in [self groupedEvents]) {
+
 		NSDateComponents *components;
-		components = [[NSCalendar currentCalendar] components:(NSHourCalendarUnit | 
-															   NSMinuteCalendarUnit) 
-													 fromDate:tile.event.startDate];
+		components = [[NSCalendar currentCalendar] components:(NSHourCalendarUnit | NSMinuteCalendarUnit) fromDate:tile.event.startDate];
 		NSInteger startHour = [components hour];
 		NSInteger startMinute = [components minute];
 		
-		components = [[NSCalendar currentCalendar] components:(NSHourCalendarUnit | 
-															   NSMinuteCalendarUnit) 
-													 fromDate:tile.event.endDate];
+		components = [[NSCalendar currentCalendar] components:(NSHourCalendarUnit | NSMinuteCalendarUnit) fromDate:tile.event.endDate];
 		NSInteger endHour = [components hour];
 		NSInteger endMinute = [components minute];
-		
+
 		CGFloat startPos = kTopLineBuffer + startHour * 2 * kHalfHourDiff - 2;
 		startPos += (startMinute / 60.0) * (kHalfHourDiff * 2.0);
 		startPos = floor(startPos);
-		
+
 		CGFloat endPos = kTopLineBuffer + endHour * 2 * kHalfHourDiff + 3;
 		endPos += (endMinute / 60.0) * (kHalfHourDiff * 2.0);
 		endPos = floor(endPos);
-		
-		tile.frame = CGRectMake(kTileLeftSide, 
-								startPos, 
-								self.bounds.size.width - kTileLeftSide - kTileRightSide,
-								endPos - startPos);
+
+		tile.frame = CGRectMake(kTileLeftSide + tile.event.startOffset, startPos, tile.event.width, endPos - startPos);
 	}
 }
+
 - (void)drawRect:(CGRect)rect {
     // grab current graphics context
 	CGContextRef g = UIGraphicsGetCurrentContext();

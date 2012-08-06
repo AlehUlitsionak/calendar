@@ -46,6 +46,8 @@
 @property (nonatomic, copy) NSString *eventDescription;
 @property (nonatomic, copy) NSDate *startDate;
 @property (nonatomic, copy) NSDate *endDate;
+@property (nonatomic) CGFloat startOffset;
+@property (nonatomic) CGFloat width;
 @property (nonatomic, copy) NSString *color;
 @property (nonatomic, strong) id userInfo;
 @property (nonatomic) BOOL allDayEvent;

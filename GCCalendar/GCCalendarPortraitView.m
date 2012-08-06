@@ -13,11 +13,11 @@
 #import "GCCalendarTile.h"
 #import "GCDatePickerControl.h"
 #import "GCCalendar.h"
+#import "NavBarItemFactory.h"
 
 #define kAnimationDuration 0.3f
 
 @interface GCCalendarPortraitView ()
-@property (nonatomic, strong) NSDate *date;
 @property (nonatomic, strong) GCCalendarDayView *dayView;
 
 - (void)reloadDayAnimated:(BOOL)animated context:(void *)context;
@@ -31,7 +31,9 @@
 - (id)init {
 	if(self = [super init]) {
 		self.title = [[NSBundle mainBundle] localizedStringForKey:@"CALENDAR" value:@"" table:@"GCCalendar"];
-		self.tabBarItem.image = [UIImage imageNamed:@"Calendar.png"];
+//		self.tabBarItem.image = [UIImage imageNamed:@"Calendar.png"];
+
+        self.navigationItem.leftBarButtonItem = [NavBarItemFactory backButtonWithTitle:@"Back" target:self action:@selector(onCancel)];
 		
 		viewDirty = YES;
 		viewVisible = NO;
@@ -109,7 +111,6 @@
 - (void)loadView {
 	[super loadView];
 	
-	self.date = [[NSUserDefaults standardUserDefaults] objectForKey:@"GCCalendarDate"];
 	if (date == nil) {
 		self.date = [NSDate date];
 	}
@@ -136,7 +137,7 @@
 															   style:UIBarButtonItemStylePlain
 															  target:self 
 															  action:@selector(today)];
-	self.navigationItem.leftBarButtonItem = button;
+	self.navigationItem.rightBarButtonItem = button;
 }
 - (void)viewWillAppear:(BOOL)animated {
 	[super viewWillAppear:animated];
@@ -219,5 +220,10 @@
 	// reset pickers
 	dayPicker.userInteractionEnabled = YES;
 }
+
+-(void) onCancel {
+    [self.navigationController popToRootViewControllerAnimated:YES];
+}
+
 
 @end

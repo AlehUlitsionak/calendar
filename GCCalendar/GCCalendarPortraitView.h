@@ -48,5 +48,6 @@
 }
 
 @property (nonatomic, assign) BOOL hasAddButton;
+@property (nonatomic, strong) NSDate *date;
 
 @end

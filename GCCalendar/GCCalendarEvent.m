@@ -10,7 +10,12 @@
 
 #import "GCCalendarEvent.h"
 
-@implementation GCCalendarEvent
+@implementation GCCalendarEvent {
+@private
+    CGFloat _startOffset;
+    CGFloat _width;
+}
+
 
 @synthesize eventName;
 @synthesize eventDescription;
@@ -19,6 +24,9 @@
 @synthesize allDayEvent;
 @synthesize color;
 @synthesize userInfo;
+@synthesize startOffset = _startOffset;
+@synthesize width = _width;
+
 
 - (id)init {
 	if (self = [super init]) {
